@@ -11,7 +11,7 @@ permissions:
   checks: write
 
 jobs:
-  test:
+  run-api-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,15 +35,19 @@ jobs:
           path: target/surefire-reports/*.xml
           reporter: java-junit
 
-      - name: Generate Allure report
-        uses: simple-elf/allure-report-action@master
+      - name: Install Allure
         if: always()
-        with:
-          allure_results: target/allure-results
+        run: |
+          curl -sL https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz | tar xz
+          echo "$PWD/allure-2.24.0/bin" >> $GITHUB_PATH
+
+      - name: Generate single-file Allure report
+        if: always()
+        run: allure generate target/allure-results --single-file -o allure-report
 
       - name: Upload Allure report as artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: allure-report
-          path: allure-history
+          path: allure-report/index.html
