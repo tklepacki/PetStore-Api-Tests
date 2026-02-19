@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   run-api-tests:
+    name: API Tests Run
     runs-on: ubuntu-latest
 
     steps:
